@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Add Pet - Pet Care Ecosystem{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">
+                    <i class="bi bi-plus-circle"></i> Add New Pet
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Image Upload Tips:</strong>
+                    <ul class="mb-0">
+                        <li>Images will be automatically cropped to square (1:1 ratio)</li>
+                        <li>Maximum file size: 5MB</li>
+                        <li>Supported formats: JPG, PNG, GIF</li>
+                        <li>Images are optimized for fast loading</li>
+                    </ul>
+                </div>
+                
+                <form method="post" enctype="multipart/form-data" id="petForm">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    
+                    <!-- Image Preview -->
+                    <div id="imagePreview" class="text-center" style="display: none;">
+                        <h6>Image Preview (will be cropped to square):</h6>
+                        <img id="previewImg" class="image-upload-preview" alt="Preview">
+                        <p class="text-muted"><small>Final image will be 800x800 pixels</small></p>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                        <a href="{% url 'pets:pet_list' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Add Pet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Image preview functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const photoInput = document.querySelector('input[type="file"][name="photo"]');
+    if (photoInput) {
+        photoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    const img = document.getElementById('previewImg');
+                    img.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Care Recommendations for {{ pet.name }} - Pet Care Ecosystem{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0">
+                    <i class="bi bi-robot"></i> AI-Powered Care Recommendations for {{ pet.name }}
+                </h3>
+                <p class="mb-0">Personalized recommendations based on {{ pet.name }}'s profile</p>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-3 text-center">
+                        {% if pet.photo %}
+                            <img src="{{ pet.photo.url }}" alt="{{ pet.name }}" class="img-fluid rounded-circle" style="max-width: 150px;">
+                        {% else %}
+                            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
+                                <i class="bi bi-heart display-4 text-muted"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-9">
+                        <h4>{{ pet.name }}</h4>
+                        <p><strong>Species:</strong> {{ pet.get_species_name }}</p>
+                        <p><strong>Age:</strong> {{ pet.age_months }} months</p>
+                        <p><strong>Weight:</strong> {{ pet.weight }} kg</p>
+                        <p><strong>Activity Level:</strong> {{ pet.get_activity_level_display }}</p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Health Recommendations -->
+                {% if recommendations.health %}
+                <div class="mb-4">
+                    <h5 class="text-danger"><i class="bi bi-heart-pulse"></i> Health Recommendations</h5>
+                    <div class="row">
+                        {% for rec in recommendations.health %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-{% if rec.priority == 'high' %}danger{% elif rec.priority == 'medium' %}warning{% else %}info{% endif %}">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        {% if rec.priority == 'high' %}
+                                            <span class="badge bg-danger">High Priority</span>
+                                        {% elif rec.priority == 'medium' %}
+                                            <span class="badge bg-warning">Medium Priority</span>
+                                        {% else %}
+                                            <span class="badge bg-info">Low Priority</span>
+                                        {% endif %}
+                                        {{ rec.title }}
+                                    </h6>
+                                    <p class="card-text">{{ rec.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Nutrition Recommendations -->
+                {% if recommendations.nutrition %}
+                <div class="mb-4">
+                    <h5 class="text-success"><i class="bi bi-egg-fried"></i> Nutrition Recommendations</h5>
+                    <div class="row">
+                        {% for rec in recommendations.nutrition %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-{% if rec.priority == 'high' %}danger{% elif rec.priority == 'medium' %}warning{% else %}info{% endif %}">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        {% if rec.priority == 'high' %}
+                                            <span class="badge bg-danger">High Priority</span>
+                                        {% elif rec.priority == 'medium' %}
+                                            <span class="badge bg-warning">Medium Priority</span>
+                                        {% else %}
+                                            <span class="badge bg-info">Low Priority</span>
+                                        {% endif %}
+                                        {{ rec.title }}
+                                    </h6>
+                                    <p class="card-text">{{ rec.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Exercise Recommendations -->
+                {% if recommendations.exercise %}
+                <div class="mb-4">
+                    <h5 class="text-primary"><i class="bi bi-bicycle"></i> Exercise Recommendations</h5>
+                    <div class="row">
+                        {% for rec in recommendations.exercise %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-{% if rec.priority == 'high' %}danger{% elif rec.priority == 'medium' %}warning{% else %}info{% endif %}">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        {% if rec.priority == 'high' %}
+                                            <span class="badge bg-danger">High Priority</span>
+                                        {% elif rec.priority == 'medium' %}
+                                            <span class="badge bg-warning">Medium Priority</span>
+                                        {% else %}
+                                            <span class="badge bg-info">Low Priority</span>
+                                        {% endif %}
+                                        {{ rec.title }}
+                                    </h6>
+                                    <p class="card-text">{{ rec.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Grooming Recommendations -->
+                {% if recommendations.grooming %}
+                <div class="mb-4">
+                    <h5 class="text-warning"><i class="bi bi-scissors"></i> Grooming Recommendations</h5>
+                    <div class="row">
+                        {% for rec in recommendations.grooming %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-{% if rec.priority == 'high' %}danger{% elif rec.priority == 'medium' %}warning{% else %}info{% endif %}">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        {% if rec.priority == 'high' %}
+                                            <span class="badge bg-danger">High Priority</span>
+                                        {% elif rec.priority == 'medium' %}
+                                            <span class="badge bg-warning">Medium Priority</span>
+                                        {% else %}
+                                            <span class="badge bg-info">Low Priority</span>
+                                        {% endif %}
+                                        {{ rec.title }}
+                                    </h6>
+                                    <p class="card-text">{{ rec.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Training Recommendations -->
+                {% if recommendations.training %}
+                <div class="mb-4">
+                    <h5 class="text-secondary"><i class="bi bi-award"></i> Training Recommendations</h5>
+                    <div class="row">
+                        {% for rec in recommendations.training %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-{% if rec.priority == 'high' %}danger{% elif rec.priority == 'medium' %}warning{% else %}info{% endif %}">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        {% if rec.priority == 'high' %}
+                                            <span class="badge bg-danger">High Priority</span>
+                                        {% elif rec.priority == 'medium' %}
+                                            <span class="badge bg-warning">Medium Priority</span>
+                                        {% else %}
+                                            <span class="badge bg-info">Low Priority</span>
+                                        {% endif %}
+                                        {{ rec.title }}
+                                    </h6>
+                                    <p class="card-text">{{ rec.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- General Recommendations -->
+                {% if recommendations.general %}
+                <div class="mb-4">
+                    <h5 class="text-dark"><i class="bi bi-info-circle"></i> General Recommendations</h5>
+                    <div class="row">
+                        {% for rec in recommendations.general %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-{% if rec.priority == 'high' %}danger{% elif rec.priority == 'medium' %}warning{% else %}info{% endif %}">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        {% if rec.priority == 'high' %}
+                                            <span class="badge bg-danger">High Priority</span>
+                                        {% elif rec.priority == 'medium' %}
+                                            <span class="badge bg-warning">Medium Priority</span>
+                                        {% else %}
+                                            <span class="badge bg-info">Low Priority</span>
+                                        {% endif %}
+                                        {{ rec.title }}
+                                    </h6>
+                                    <p class="card-text">{{ rec.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="alert alert-info">
+                    <h6><i class="bi bi-lightbulb"></i> About These Recommendations:</h6>
+                    <ul class="mb-0">
+                        <li>These recommendations are generated using AI decision-tree logic based on {{ pet.name }}'s profile</li>
+                        <li>Priority levels indicate urgency: High (immediate action), Medium (important), Low (beneficial)</li>
+                        <li>Always consult with your veterinarian for personalized medical advice</li>
+                        <li>Update {{ pet.name }}'s profile regularly for more accurate recommendations</li>
+                    </ul>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{% url 'pets:pet_detail' pet.id %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Pet Profile
+                    </a>
+                    <a href="{% url 'pets:diet_recommendation' pet.id %}" class="btn btn-success">
+                        <i class="bi bi-heart-pulse"></i> View Diet Plan
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

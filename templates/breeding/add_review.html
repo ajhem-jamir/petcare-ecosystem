@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Review {{ breeder.business_name }} - Pet Care Ecosystem{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">
+                    <i class="bi bi-star"></i> Review {{ breeder.business_name }}
+                </h3>
+                <p class="mb-0 text-muted">Share your experience with this breeder</p>
+            </div>
+            <div class="card-body">
+                <!-- Breeder Summary -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        {% if breeder.photo %}
+                            <img src="{{ breeder.photo.url }}" class="img-fluid rounded" alt="{{ breeder.business_name }}">
+                        {% else %}
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 120px;">
+                                <i class="bi bi-building display-4 text-muted"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-9">
+                        <h4>{{ breeder.business_name }}</h4>
+                        <p class="mb-1"><strong>{{ breeder.species_specialization }}</strong></p>
+                        <p class="mb-1">{{ breeder.experience_years }} years experience</p>
+                        <p class="text-muted">{{ breeder.location }}</p>
+                    </div>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'breeding:breeder_detail' breeder.id %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Submit Review
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

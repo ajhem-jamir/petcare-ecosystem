@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Diet Recommendation for {{ pet.name }} - Pet Care Ecosystem{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">
+                    <i class="bi bi-heart-pulse"></i> Diet Recommendation for {{ pet.name }}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Pet Information</h5>
+                        <p><strong>Name:</strong> {{ pet.name }}</p>
+                        <p><strong>Species:</strong> {{ diet.species }}</p>
+                        <p><strong>Weight:</strong> {{ pet.weight }} kg</p>
+                        <p><strong>Activity Level:</strong> {{ pet.get_activity_level_display }}</p>
+                        <p><strong>Life Stage:</strong> {{ diet.life_stage|title }}</p>
+                        <p><strong>Age:</strong> {{ pet.age_months }} months</p>
+                    </div>
+                    <div class="col-md-6">
+                        {% if pet.photo %}
+                            <img src="{{ pet.photo.url }}" alt="{{ pet.name }}" class="img-fluid rounded">
+                        {% endif %}
+                    </div>
+                </div>
+
+                <hr>
+
+                <h5 class="mb-3">Energy Requirements</h5>
+                <div class="row text-center mb-4">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="text-muted">RER (Resting)</h6>
+                                <h3 class="text-info">{{ diet.rer|floatformat:0 }}</h3>
+                                <small>kcal/day</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="text-muted">MER (Maintenance)</h6>
+                                <h3 class="text-primary">{{ diet.calories|floatformat:0 }}</h3>
+                                <small>kcal/day</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="mb-3">Daily Macronutrient Requirements</h5>
+                
+                <div class="row text-center mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="text-muted">Protein</h6>
+                                <h3 class="text-success">{{ diet.protein|floatformat:0 }}</h3>
+                                <small>kcal/day</small>
+                                <p class="mb-0 mt-2"><strong>{{ diet.protein_grams|floatformat:1 }}g</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="text-muted">Fat</h6>
+                                <h3 class="text-warning">{{ diet.fat|floatformat:0 }}</h3>
+                                <small>kcal/day</small>
+                                <p class="mb-0 mt-2"><strong>{{ diet.fat_grams|floatformat:1 }}g</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="text-muted">Carbs</h6>
+                                <h3 class="text-info">{{ diet.carbs|floatformat:0 }}</h3>
+                                <small>kcal/day</small>
+                                <p class="mb-0 mt-2"><strong>{{ diet.carbs_grams|floatformat:1 }}g</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <h5><i class="bi bi-lightbulb"></i> Veterinary Recommendations</h5>
+                    <div style="white-space: pre-line;">{{ diet.recommendation }}</div>
+                </div>
+
+                <div class="alert alert-info">
+                    <h6><i class="bi bi-info-circle"></i> Understanding Your Pet's Diet:</h6>
+                    <ul class="mb-0">
+                        <li><strong>RER (Resting Energy Requirement):</strong> Calories needed at complete rest</li>
+                        <li><strong>MER (Maintenance Energy Requirement):</strong> Total daily calories needed</li>
+                        <li><strong>Macronutrients:</strong> Shown in both calories and grams for easy measurement</li>
+                        <li>These calculations use veterinary-approved formulas specific to {{ diet.species }}</li>
+                        <li>Adjust portions based on your pet's body condition and health status</li>
+                        <li>Always consult with your veterinarian for personalized dietary advice</li>
+                    </ul>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{% url 'pets:pet_detail' pet.id %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Pet Profile
+                    </a>
+                    <a href="{% url 'pets:pet_list' %}" class="btn btn-primary">
+                        <i class="bi bi-list"></i> My Pets
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

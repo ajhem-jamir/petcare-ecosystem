@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ pet.name }} - Pet Care Ecosystem{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                {% if pet.photo %}
+                    <img src="{{ pet.photo.url }}" class="pet-detail-photo mb-3" alt="{{ pet.name }}">
+                {% else %}
+                    <div class="image-placeholder mb-3">
+                        <div>
+                            <i class="bi bi-heart display-4 text-muted"></i>
+                            <p class="text-muted mt-2">No photo uploaded</p>
+                        </div>
+                    </div>
+                {% endif %}
+                <h3>{{ pet.name }}</h3>
+                <p class="text-muted">{{ pet.get_species_name }} - {{ pet.breed|default:"Mixed" }}</p>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0">Pet Information</h6>
+            </div>
+            <div class="card-body">
+                <p><strong>Age:</strong> {{ pet.age_months }} months</p>
+                <p><strong>Gender:</strong> {{ pet.get_gender_display }}</p>
+                <p><strong>Weight:</strong> {{ pet.weight }} kg</p>
+                <p><strong>Activity Level:</strong> {{ pet.get_activity_level_display }}</p>
+                {% if pet.color %}<p><strong>Color:</strong> {{ pet.color }}</p>{% endif %}
+                {% if pet.microchip_id %}<p><strong>Microchip:</strong> {{ pet.microchip_id }}</p>{% endif %}
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0">Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'pets:edit_pet' pet.id %}" class="btn btn-warning btn-sm w-100 mb-2">
+                    <i class="bi bi-pencil"></i> Edit Pet Profile
+                </a>
+                <a href="{% url 'pets:diet_recommendation' pet.id %}" class="btn btn-success btn-sm w-100 mb-2">
+                    <i class="bi bi-heart-pulse"></i> Get Diet Recommendation
+                </a>
+                <a href="{% url 'pets:ai_recommendations' pet.id %}" class="btn btn-info btn-sm w-100 mb-2">
+                    <i class="bi bi-robot"></i> AI Care Recommendations
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <!-- Pet Activities -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-activity"></i> Recent Activities
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Recent activities and updates for {{ pet.name }} will appear here.</p>
+            </div>
+        </div>
+        
+        <!-- Feeding Schedule -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock"></i> Feeding Schedule
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if feeding_schedules %}
+                    {% for schedule in feeding_schedules %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <strong>{{ schedule.time }}</strong> - {{ schedule.food_type }}
+                                <br><small class="text-muted">{{ schedule.amount }}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No feeding schedule set.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

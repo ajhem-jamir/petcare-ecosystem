@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Edit {{ pet.name }} - Pet Care Ecosystem{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">
+                    <i class="bi bi-pencil"></i> Edit {{ pet.name }}
+                </h3>
+            </div>
+            <div class="card-body">
+                {% if pet.photo %}
+                <div class="alert alert-info">
+                    <h6><i class="bi bi-image"></i> Current Photo:</h6>
+                    <div class="text-center my-3">
+                        <img src="{{ pet.photo.url }}" alt="{{ pet.name }}" class="img-fluid rounded" style="max-height: 300px;">
+                    </div>
+                    <p class="mb-0"><small>Upload a new photo below to replace the current one.</small></p>
+                </div>
+                {% endif %}
+                
+                <div class="alert alert-success">
+                    <i class="bi bi-magic"></i>
+                    <strong>Auto-Crop Feature:</strong>
+                    <ul class="mb-0">
+                        <li>New images will be automatically cropped to square (1:1 ratio)</li>
+                        <li>Smart center-crop focuses on the main subject</li>
+                        <li>Images optimized to 800x800 pixels for perfect display</li>
+                        <li>Maximum file size: 5MB</li>
+                    </ul>
+                </div>
+                
+                <form method="post" enctype="multipart/form-data" id="petEditForm">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    
+                    <!-- New Image Preview -->
+                    <div id="newImagePreview" class="text-center" style="display: none;">
+                        <h6>New Image Preview (will be cropped to square):</h6>
+                        <img id="newPreviewImg" class="image-upload-preview" alt="New Preview">
+                        <p class="text-muted"><small>Final image will be 800x800 pixels</small></p>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Note:</strong> If you upload a new photo, it will automatically replace the existing one. The old image will be permanently deleted.
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'pets:pet_detail' pet.id %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Image preview functionality for edit form
+document.addEventListener('DOMContentLoaded', function() {
+    const photoInput = document.querySelector('input[type="file"][name="photo"]');
+    if (photoInput) {
+        photoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('newImagePreview');
+                    const img = document.getElementById('newPreviewImg');
+                    img.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

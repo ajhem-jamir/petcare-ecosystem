@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Pet Adoption - Pet Care Ecosystem{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-house-heart text-warning"></i> Pet Adoption</h2>
+    <div>
+        <a href="{% url 'adoption:my_applications' %}" class="btn btn-outline-warning me-2">
+            <i class="bi bi-file-text"></i> My Applications
+        </a>
+        <a href="{% url 'adoption:create_listing' %}" class="btn btn-warning">
+            <i class="bi bi-plus-circle"></i> List Pet for Adoption
+        </a>
+    </div>
+</div>
+
+<!-- Search and Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="search" placeholder="Search by name, breed, location..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-3">
+                <select name="species" class="form-select">
+                    <option value="">All Species</option>
+                    <option value="dog" {% if species_filter == 'dog' %}selected{% endif %}>Dogs</option>
+                    <option value="cat" {% if species_filter == 'cat' %}selected{% endif %}>Cats</option>
+                    <option value="bird" {% if species_filter == 'bird' %}selected{% endif %}>Birds</option>
+                    <option value="rabbit" {% if species_filter == 'rabbit' %}selected{% endif %}>Rabbits</option>
+                    <option value="other" {% if species_filter == 'other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="age" class="form-select">
+                    <option value="">All Ages</option>
+                    <option value="puppy_kitten" {% if age_filter == 'puppy_kitten' %}selected{% endif %}>Puppy/Kitten</option>
+                    <option value="young" {% if age_filter == 'young' %}selected{% endif %}>Young</option>
+                    <option value="adult" {% if age_filter == 'adult' %}selected{% endif %}>Adult</option>
+                    <option value="senior" {% if age_filter == 'senior' %}selected{% endif %}>Senior</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if listings %}
+    <div class="row">
+        {% for listing in listings %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card adoption-card h-100">
+                    {% if listing.photos.first %}
+                        <img src="{{ listing.photos.first.image.url }}" class="card-img-top pet-photo" alt="{{ listing.name }}">
+                    {% else %}
+                        <div class="card-img-top pet-photo bg-light d-flex align-items-center justify-content-center">
+                            <i class="bi bi-house-heart display-4 text-muted"></i>
+                        </div>
+                    {% endif %}
+                    
+                    {% if listing.featured %}
+                        <span class="badge bg-warning adoption-badge">Featured</span>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ listing.name }}</h5>
+                        <p class="card-text">
+                            <strong>{{ listing.species|title }}</strong> - {{ listing.breed|default:"Mixed" }}<br>
+                            <small class="text-muted">{{ listing.get_age_group_display }} • {{ listing.get_size_display }} • {{ listing.get_gender_display }}</small>
+                        </p>
+                        <p class="card-text small">{{ listing.description|truncatewords:15 }}</p>
+                        
+                        <div class="mb-2">
+                            {% if listing.is_vaccinated %}
+                                <span class="badge bg-success me-1">Vaccinated</span>
+                            {% endif %}
+                            {% if listing.is_spayed_neutered %}
+                                <span class="badge bg-info me-1">Spayed/Neutered</span>
+                            {% endif %}
+                            {% if listing.good_with_kids %}
+                                <span class="badge bg-primary me-1">Good with Kids</span>
+                            {% endif %}
+                        </div>
+                        
+                        {% if listing.adoption_fee %}
+                            <p class="text-success"><strong>Adoption Fee: ₹{{ listing.adoption_fee }}</strong></p>
+                        {% else %}
+                            <p class="text-success"><strong>Free Adoption</strong></p>
+                        {% endif %}
+                        
+                        <p class="text-muted small">
+                            <i class="bi bi-geo-alt"></i> {{ listing.location }}
+                        </p>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="d-grid">
+                            <a href="{% url 'adoption:adoption_detail' listing.id %}" class="btn btn-outline-warning">
+                                <i class="bi bi-eye"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-house-heart display-1 text-muted"></i>
+        <h3 class="mt-3">No pets available for adoption</h3>
+        <p class="text-muted">
+            {% if search_query or species_filter or age_filter %}
+                Try adjusting your search criteria.
+            {% else %}
+                Check back later for new listings!
+            {% endif %}
+        </p>
+        <a href="{% url 'adoption:create_listing' %}" class="btn btn-warning">
+            <i class="bi bi-plus-circle"></i> List a Pet for Adoption
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

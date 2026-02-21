@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ listing.name }} - Adoption Details{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            {% if listing.photos.first %}
+                <img src="{{ listing.photos.first.image.url }}" class="card-img-top" alt="{{ listing.name }}" style="height: 400px; object-fit: cover;">
+            {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <i class="bi bi-house-heart display-1 text-muted"></i>
+                </div>
+            {% endif %}
+            
+            <div class="card-body text-center">
+                <h3>{{ listing.name }}</h3>
+                <p class="text-muted">{{ listing.species|title }} - {{ listing.breed|default:"Mixed Breed" }}</p>
+                
+                {% if listing.adoption_fee %}
+                    <h4 class="text-success">Adoption Fee: ₹{{ listing.adoption_fee }}</h4>
+                {% else %}
+                    <h4 class="text-success">Free Adoption</h4>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Additional Photos -->
+        {% if listing.photos.count > 1 %}
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">More Photos</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for photo in listing.photos.all %}
+                            {% if not photo.is_primary %}
+                                <div class="col-6 mb-2">
+                                    <img src="{{ photo.image.url }}" class="img-fluid rounded" alt="{{ photo.caption }}">
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Pet Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <td><strong>Age Group:</strong></td>
+                        <td>{{ listing.get_age_group_display }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Size:</strong></td>
+                        <td>{{ listing.get_size_display }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gender:</strong></td>
+                        <td>{{ listing.get_gender_display }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Color:</strong></td>
+                        <td>{{ listing.color }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Location:</strong></td>
+                        <td>{{ listing.location }}</td>
+                    </tr>
+                </table>
+                
+                <div class="mb-3">
+                    <h6>Health & Training Status:</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% if listing.is_vaccinated %}
+                            <span class="badge bg-success">✓ Vaccinated</span>
+                        {% else %}
+                            <span class="badge bg-secondary">✗ Not Vaccinated</span>
+                        {% endif %}
+                        
+                        {% if listing.is_spayed_neutered %}
+                            <span class="badge bg-success">✓ Spayed/Neutered</span>
+                        {% else %}
+                            <span class="badge bg-secondary">✗ Not Spayed/Neutered</span>
+                        {% endif %}
+                        
+                        {% if listing.is_house_trained %}
+                            <span class="badge bg-success">✓ House Trained</span>
+                        {% else %}
+                            <span class="badge bg-secondary">✗ Not House Trained</span>
+                        {% endif %}
+                        
+                        {% if listing.good_with_kids %}
+                            <span class="badge bg-primary">✓ Good with Kids</span>
+                        {% endif %}
+                        
+                        {% if listing.good_with_pets %}
+                            <span class="badge bg-info">✓ Good with Other Pets</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">About {{ listing.name }}</h5>
+            </div>
+            <div class="card-body">
+                <h6>Description:</h6>
+                <p>{{ listing.description }}</p>
+                
+                <h6>Personality:</h6>
+                <p>{{ listing.personality_traits }}</p>
+                
+                {% if listing.medical_history %}
+                    <h6>Medical History:</h6>
+                    <p>{{ listing.medical_history }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Contact Information</h5>
+            </div>
+            <div class="card-body">
+                <p><i class="bi bi-telephone"></i> <strong>Phone:</strong> {{ listing.contact_phone }}</p>
+                <p><i class="bi bi-envelope"></i> <strong>Email:</strong> {{ listing.contact_email }}</p>
+                <p><i class="bi bi-person"></i> <strong>Listed by:</strong> {{ listing.lister.username }}</p>
+            </div>
+        </div>
+        
+        <!-- Application Section -->
+        {% if user.is_authenticated %}
+            <div class="card mt-3">
+                <div class="card-body text-center">
+                    {% if user_application %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-check-circle"></i>
+                            <strong>Application Status:</strong> {{ user_application.get_status_display }}
+                            <br><small>Applied on {{ user_application.created_at|date:"M d, Y" }}</small>
+                        </div>
+                    {% else %}
+                        <h5>Interested in adopting {{ listing.name }}?</h5>
+                        <p class="text-muted">Submit an adoption application to get started.</p>
+                        <a href="{% url 'adoption:apply_for_adoption' listing.id %}" class="btn btn-warning btn-lg">
+                            <i class="bi bi-heart"></i> Apply for Adoption
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="card mt-3">
+                <div class="card-body text-center">
+                    <h5>Interested in adopting {{ listing.name }}?</h5>
+                    <p class="text-muted">Please log in to submit an adoption application.</p>
+                    <a href="{% url 'accounts:login' %}" class="btn btn-primary">
+                        <i class="bi bi-box-arrow-in-right"></i> Login to Apply
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="text-center">
+            <a href="{% url 'adoption:adoption_list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Adoption Listings
+            </a>
+            <a href="tel:{{ listing.contact_phone }}" class="btn btn-success">
+                <i class="bi bi-telephone"></i> Call Now
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

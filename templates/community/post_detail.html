@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ post.title }} - Community Forum{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <!-- Main Post -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h4 class="mb-1">{{ post.title }}</h4>
+                        <small class="text-muted">
+                            <i class="bi bi-person"></i> {{ post.author.username }}
+                            <i class="bi bi-calendar ms-2"></i> {{ post.created_at|date:"M d, Y g:i A" }}
+                            <i class="bi bi-eye ms-2"></i> {{ post.views_count }} views
+                        </small>
+                    </div>
+                    <span class="badge bg-{% if post.post_type == 'question' %}primary{% elif post.post_type == 'tip' %}success{% elif post.post_type == 'lost_pet' %}danger{% else %}info{% endif %}">
+                        {{ post.get_post_type_display }}
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" class="img-fluid rounded mb-3" alt="Post image">
+                {% endif %}
+                <div>{{ post.content|linebreaks }}</div>
+            </div>
+        </div>
+
+        <!-- Replies Section -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-chat-dots"></i> Replies ({{ post.replies.count }})
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if user.is_authenticated %}
+                    <!-- Reply Form -->
+                    <form method="post" class="mb-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ form.content }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-reply"></i> Post Reply
+                        </button>
+                    </form>
+                    <hr>
+                {% endif %}
+
+                <!-- Display Replies -->
+                {% for reply in replies %}
+                    <div class="reply-thread mb-4">
+                        <!-- Top Level Reply -->
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px;">
+                                    {{ reply.author.username|first|upper }}
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <div class="bg-light rounded p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <strong>{{ reply.author.username }}</strong>
+                                        <small class="text-muted">{{ reply.created_at|timesince }} ago</small>
+                                    </div>
+                                    <div>{{ reply.content|linebreaks }}</div>
+                                </div>
+                                
+                                {% if user.is_authenticated and reply.can_reply %}
+                                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="toggleReplyForm('{{ reply.id }}')">
+                                        <i class="bi bi-reply"></i> Reply
+                                    </button>
+                                    
+                                    <!-- Nested Reply Form -->
+                                    <div id="reply-form-{{ reply.id }}" class="mt-3" style="display: none;">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="parent_id" value="{{ reply.id }}">
+                                            <div class="mb-2">
+                                                <textarea name="content" class="form-control" rows="2" placeholder="Write your reply..." required></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-sm btn-primary">Post Reply</button>
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="toggleReplyForm('{{ reply.id }}')">Cancel</button>
+                                        </form>
+                                    </div>
+                                {% endif %}
+
+                                <!-- Child Replies (Level 1) -->
+                                {% for child_reply in reply.child_replies.all %}
+                                    <div class="d-flex mt-3 ms-4">
+                                        <div class="flex-shrink-0">
+                                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 35px; height: 35px;">
+                                                {{ child_reply.author.username|first|upper }}
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="bg-light rounded p-2">
+                                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                                    <strong class="small">{{ child_reply.author.username }}</strong>
+                                                    <small class="text-muted">{{ child_reply.created_at|timesince }} ago</small>
+                                                </div>
+                                                <div class="small">{{ child_reply.content|linebreaks }}</div>
+                                            </div>
+                                            
+                                            {% if user.is_authenticated and child_reply.can_reply %}
+                                                <button class="btn btn-sm btn-outline-secondary mt-1" onclick="toggleReplyForm('{{ child_reply.id }}')">
+                                                    <i class="bi bi-reply"></i> Reply
+                                                </button>
+                                                
+                                                <!-- Nested Reply Form Level 2 -->
+                                                <div id="reply-form-{{ child_reply.id }}" class="mt-2" style="display: none;">
+                                                    <form method="post">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="parent_id" value="{{ child_reply.id }}">
+                                                        <div class="mb-2">
+                                                            <textarea name="content" class="form-control" rows="2" placeholder="Write your reply..." required></textarea>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-sm btn-secondary">Post Reply</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleReplyForm('{{ child_reply.id }}')">Cancel</button>
+                                                    </form>
+                                                </div>
+                                            {% endif %}
+
+                                            <!-- Grandchild Replies (Level 2 - Final Level) -->
+                                            {% for grandchild_reply in child_reply.child_replies.all %}
+                                                <div class="d-flex mt-2 ms-3">
+                                                    <div class="flex-shrink-0">
+                                                        <div class="bg-info rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 30px; height: 30px;">
+                                                            {{ grandchild_reply.author.username|first|upper }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-grow-1 ms-2">
+                                                        <div class="bg-light rounded p-2">
+                                                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                                                <strong class="small">{{ grandchild_reply.author.username }}</strong>
+                                                                <small class="text-muted">{{ grandchild_reply.created_at|timesince }} ago</small>
+                                                            </div>
+                                                            <div class="small">{{ grandchild_reply.content|linebreaks }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="text-muted text-center py-4">
+                        <i class="bi bi-chat"></i> No replies yet. Be the first to reply!
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- Post Info -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">Post Information</h6>
+            </div>
+            <div class="card-body">
+                <p><strong>Category:</strong> {{ post.category.name }}</p>
+                <p><strong>Author:</strong> {{ post.author.username }}</p>
+                <p><strong>Created:</strong> {{ post.created_at|date:"M d, Y" }}</p>
+                <p><strong>Views:</strong> {{ post.views_count }}</p>
+                <p><strong>Replies:</strong> {{ post.replies.count }}</p>
+                {% if post.is_solved %}
+                    <span class="badge bg-success">
+                        <i class="bi bi-check-circle"></i> Solved
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="card mt-3">
+            <div class="card-body text-center">
+                <a href="{% url 'community:forum_list' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left"></i> Back to Forum
+                </a>
+                <a href="{% url 'community:category_posts' post.category.id %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-folder"></i> {{ post.category.name }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleReplyForm(replyId) {
+    const form = document.getElementById('reply-form-' + replyId);
+    if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+        const textarea = form.querySelector('textarea');
+        if (textarea) {
+            textarea.focus();
+        }
+    } else {
+        form.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

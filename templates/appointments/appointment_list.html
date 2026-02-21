@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Appointments - Pet Care Ecosystem{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-calendar-check text-success"></i> My Appointments</h2>
+    <a href="{% url 'appointments:book_appointment' %}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Book Appointment
+    </a>
+</div>
+
+{% if appointments %}
+    <div class="row">
+        {% for appointment in appointments %}
+            <div class="col-md-6 mb-3">
+                <div class="card appointment-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="card-title">{{ appointment.pet.name }}</h5>
+                                <p class="card-text">
+                                    <strong>{{ appointment.get_appointment_type_display }}</strong><br>
+                                    <i class="bi bi-calendar"></i> {{ appointment.date }}<br>
+                                    <i class="bi bi-clock"></i> {{ appointment.time }}<br>
+                                    <i class="bi bi-hospital"></i> {{ appointment.clinic.name }}
+                                </p>
+                            </div>
+                            <span class="badge bg-{{ appointment.status|yesno:'success,warning,danger' }}">
+                                {{ appointment.get_status_display }}
+                            </span>
+                        </div>
+                        {% if appointment.notes %}
+                            <p class="text-muted small">{{ appointment.notes }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-calendar-x display-1 text-muted"></i>
+        <h3 class="mt-3">No appointments scheduled</h3>
+        <p class="text-muted">Book your first appointment to get started!</p>
+        <a href="{% url 'appointments:book_appointment' %}" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Book Appointment
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

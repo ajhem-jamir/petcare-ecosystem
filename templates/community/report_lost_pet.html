@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Report Lost Pet - Pet Care Ecosystem{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">
+                    <i class="bi bi-exclamation-triangle text-danger"></i> Report Lost Pet
+                </h3>
+                <p class="mb-0 text-muted">Help us spread the word and find your beloved pet</p>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Tips for a successful report:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Upload a clear, recent photo of your pet</li>
+                        <li>Provide detailed description including distinctive marks</li>
+                        <li>Be specific about the last seen location</li>
+                        <li>Include your contact information for quick response</li>
+                    </ul>
+                </div>
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'community:lost_pets' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-check-circle"></i> Submit Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

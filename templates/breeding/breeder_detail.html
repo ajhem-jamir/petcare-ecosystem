@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ breeder.business_name }} - Breeder Details{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            {% if breeder.photo %}
+                <img src="{{ breeder.photo.url }}" class="card-img-top" alt="{{ breeder.business_name }}" style="height: 300px; object-fit: cover;">
+            {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 300px;">
+                    <i class="bi bi-building display-1 text-muted"></i>
+                </div>
+            {% endif %}
+            
+            <div class="card-body text-center">
+                <h3>{{ breeder.business_name }}</h3>
+                <p class="text-muted">{{ breeder.species_specialization }}</p>
+                <span class="badge bg-success fs-6">
+                    <i class="bi bi-patch-check"></i> Verified Breeder
+                </span>
+                
+                {% if breeder.average_rating > 0 %}
+                    <div class="mt-2">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= breeder.average_rating %}
+                                <i class="bi bi-star-fill text-warning"></i>
+                            {% else %}
+                                <i class="bi bi-star text-muted"></i>
+                            {% endif %}
+                        {% endfor %}
+                        <small class="text-muted ms-2">({{ breeder.reviews.count }} reviews)</small>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Breeder Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <td><strong>Specialization:</strong></td>
+                        <td>{{ breeder.species_specialization }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Experience:</strong></td>
+                        <td>{{ breeder.experience_years }} years</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Location:</strong></td>
+                        <td>{{ breeder.location }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phone:</strong></td>
+                        <td>{{ breeder.phone }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Email:</strong></td>
+                        <td>{{ breeder.email }}</td>
+                    </tr>
+                    {% if breeder.website %}
+                    <tr>
+                        <td><strong>Website:</strong></td>
+                        <td><a href="{{ breeder.website }}" target="_blank">{{ breeder.website }}</a></td>
+                    </tr>
+                    {% endif %}
+                </table>
+                
+                <div class="mb-3">
+                    <h6>Services & Guarantees:</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% if breeder.health_testing %}
+                            <span class="badge bg-success">✓ Health Testing</span>
+                        {% endif %}
+                        {% if breeder.health_guarantee %}
+                            <span class="badge bg-success">✓ Health Guarantee</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">About Our Breeding Program</h5>
+            </div>
+            <div class="card-body">
+                <h6>Description:</h6>
+                <p>{{ breeder.description }}</p>
+                
+                <h6>Breeds Available:</h6>
+                <p>{{ breeder.breeds_available }}</p>
+                
+                {% if breeder.certifications %}
+                    <h6>Certifications:</h6>
+                    <p>{{ breeder.certifications }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-body text-center">
+                <h5>Interested in our pets?</h5>
+                <p class="text-muted">Contact us to learn about available puppies/kittens</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="tel:{{ breeder.phone }}" class="btn btn-success">
+                        <i class="bi bi-telephone"></i> Call Now
+                    </a>
+                    <a href="mailto:{{ breeder.email }}" class="btn btn-primary">
+                        <i class="bi bi-envelope"></i> Send Email
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reviews Section -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Customer Reviews</h5>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'breeding:add_review' breeder.id %}" class="btn btn-outline-primary">
+                        <i class="bi bi-star"></i> Write Review
+                    </a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if reviews %}
+                    {% for review in reviews %}
+                        <div class="review-item mb-3 pb-3 border-bottom">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <strong>{{ review.title }}</strong>
+                                    <div>
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            {% else %}
+                                                <i class="bi bi-star text-muted"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                            </div>
+                            <p>{{ review.review_text }}</p>
+                            <small class="text-muted">
+                                by {{ review.reviewer.username }}
+                                {% if review.would_recommend %}
+                                    <span class="badge bg-success ms-2">Recommends</span>
+                                {% endif %}
+                            </small>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center py-4">No reviews yet. Be the first to review!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12 text-center">
+        <a href="{% url 'breeding:breeder_list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Breeders
+        </a>
+    </div>
+</div>
+{% endblock %}

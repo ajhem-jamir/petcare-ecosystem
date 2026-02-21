@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Community Forum - Pet Care Ecosystem{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-people text-info"></i> Community Forum</h2>
+    <a href="{% url 'community:create_post' %}" class="btn btn-info">
+        <i class="bi bi-plus-circle"></i> Create Post
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Categories</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for category in categories %}
+                    <a href="{% url 'community:category_posts' category.id %}" class="list-group-item list-group-item-action">
+                        <i class="bi {{ category.icon|default:'bi-chat-dots' }}"></i> {{ category.name }}
+                        <small class="text-muted d-block">{{ category.description }}</small>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Posts</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_posts %}
+                    {% for post in recent_posts %}
+                        <div class="forum-post">
+                            <h6><a href="{% url 'community:post_detail' post.id %}" class="text-decoration-none">{{ post.title }}</a></h6>
+                            <p class="text-muted small mb-1">{{ post.content|truncatewords:20 }}</p>
+                            <small class="text-muted">
+                                by {{ post.author.username }} in {{ post.category.name }} - {{ post.created_at|timesince }} ago
+                                <span class="ms-2">
+                                    <i class="bi bi-eye"></i> {{ post.views_count }}
+                                    <i class="bi bi-chat ms-2"></i> {{ post.replies.count }}
+                                </span>
+                            </small>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No posts yet. Be the first to start a discussion!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

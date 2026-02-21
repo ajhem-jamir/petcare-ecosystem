@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Hero Section -->
+        <div class="jumbotron bg-primary text-white rounded p-5 mb-4">
+            <h1 class="display-4">Welcome to Pet Care Ecosystem</h1>
+            <p class="lead">Your complete solution for pet care, community, and adoption services.</p>
+            {% if not user.is_authenticated %}
+                <a class="btn btn-light btn-lg" href="{% url 'accounts:register' %}" role="button">Get Started</a>
+            {% endif %}
+        </div>
+
+        <!-- Features -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-heart display-4 text-primary mb-3"></i>
+                        <h5 class="card-title">Pet Profiles</h5>
+                        <p class="card-text">Create detailed profiles for your pets with photos and information.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-calendar-check display-4 text-success mb-3"></i>
+                        <h5 class="card-title">Vet Appointments</h5>
+                        <p class="card-text">Schedule and manage veterinary appointments with ease.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-search display-4 text-danger mb-3"></i>
+                        <h5 class="card-title">Lost & Found</h5>
+                        <p class="card-text">Report lost pets and help reunite them with their families.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people display-4 text-info mb-3"></i>
+                        <h5 class="card-title">Pet Community</h5>
+                        <p class="card-text">Connect with other pet owners, share experiences, and get advice.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-house-heart display-4 text-warning mb-3"></i>
+                        <h5 class="card-title">Pet Adoption</h5>
+                        <p class="card-text">Find your perfect companion or help pets find loving homes.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-award display-4 text-primary mb-3"></i>
+                        <h5 class="card-title">Verified Breeders</h5>
+                        <p class="card-text">Find responsible, verified breeders for your next pet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        {% if user.is_authenticated %}
+            <!-- Quick Actions -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'pets:add_pet' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Add New Pet
+                        </a>
+                        <a href="{% url 'appointments:book_appointment' %}" class="btn btn-success">
+                            <i class="bi bi-calendar-plus"></i> Book Appointment
+                        </a>
+                        <a href="{% url 'community:report_lost_pet' %}" class="btn btn-danger">
+                            <i class="bi bi-search"></i> Report Lost Pet
+                        </a>
+                        <a href="{% url 'community:create_post' %}" class="btn btn-info">
+                            <i class="bi bi-chat-dots"></i> Create Post
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Your recent pet care activities will appear here.</p>
+                </div>
+            </div>
+        {% else %}
+            <!-- Registration CTA -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Join Our Community</h5>
+                </div>
+                <div class="card-body">
+                    <p>Create an account to start managing your pet's care and connect with other pet lovers.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'accounts:register' %}" class="btn btn-primary">Register Now</a>
+                        <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">Login</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

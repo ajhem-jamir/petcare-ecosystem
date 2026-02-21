@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ report.pet_name }} - Lost Pet Details{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            {% if report.photo %}
+                <img src="{{ report.photo.url }}" class="card-img-top" alt="{{ report.pet_name }}" style="height: 400px; object-fit: cover;">
+            {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <i class="bi bi-question-circle display-1 text-muted"></i>
+                </div>
+            {% endif %}
+            
+            <div class="card-body text-center">
+                <h3>{{ report.pet_name }}</h3>
+                <span class="badge bg-{% if report.status == 'lost' %}danger{% elif report.status == 'found' %}warning{% else %}success{% endif %} fs-6">
+                    {{ report.get_status_display }}
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Pet Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <td><strong>Species:</strong></td>
+                        <td>{{ report.species|title }}</td>
+                    </tr>
+                    {% if report.breed %}
+                    <tr>
+                        <td><strong>Breed:</strong></td>
+                        <td>{{ report.breed }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td><strong>Color:</strong></td>
+                        <td>{{ report.color }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Size:</strong></td>
+                        <td>{{ report.get_size_display }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Age:</strong></td>
+                        <td>{{ report.age_estimate }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last Seen:</strong></td>
+                        <td>{{ report.last_seen_date|date:"M d, Y g:i A" }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Location & Description</h5>
+            </div>
+            <div class="card-body">
+                <h6>Last Seen Location:</h6>
+                <p>{{ report.last_seen_location }}</p>
+                
+                <h6>Description:</h6>
+                <p>{{ report.description }}</p>
+                
+                {% if report.reward_amount %}
+                    <div class="alert alert-success">
+                        <i class="bi bi-cash"></i>
+                        <strong>Reward Offered: ₹{{ report.reward_amount }}</strong>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Contact Information</h5>
+            </div>
+            <div class="card-body">
+                <p><i class="bi bi-telephone"></i> <strong>Phone:</strong> {{ report.contact_phone }}</p>
+                {% if report.contact_email %}
+                    <p><i class="bi bi-envelope"></i> <strong>Email:</strong> {{ report.contact_email }}</p>
+                {% endif %}
+                <p><i class="bi bi-person"></i> <strong>Reported by:</strong> {{ report.reporter.username }}</p>
+                <p><i class="bi bi-calendar"></i> <strong>Report Date:</strong> {{ report.created_at|date:"M d, Y" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="text-center">
+            <a href="{% url 'community:lost_pets' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Lost & Found
+            </a>
+            {% if report.status == 'lost' %}
+                <a href="tel:{{ report.contact_phone }}" class="btn btn-success">
+                    <i class="bi bi-telephone"></i> Call Now
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Verified Breeders - Pet Care Ecosystem{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-award text-primary"></i> Verified Breeders</h2>
+    <a href="{% url 'breeding:create_listing' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> List Your Breeding Service
+    </a>
+</div>
+
+<!-- Search and Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="search" placeholder="Search by business name, breeds, location..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-3">
+                <input type="text" class="form-control" name="species" placeholder="Species (e.g., Dogs, Cats)" value="{{ species_filter }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if breeders %}
+    <div class="row">
+        {% for breeder in breeders %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    {% if breeder.photo %}
+                        <img src="{{ breeder.photo.url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ breeder.business_name }}">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="bi bi-building display-4 text-muted"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title">{{ breeder.business_name }}</h5>
+                            <span class="badge bg-success">
+                                <i class="bi bi-patch-check"></i> Verified
+                            </span>
+                        </div>
+                        
+                        <p class="card-text">
+                            <strong>{{ breeder.species_specialization }}</strong><br>
+                            <small class="text-muted">{{ breeder.experience_years }} years experience</small>
+                        </p>
+                        
+                        <p class="card-text small">
+                            <i class="bi bi-geo-alt"></i> {{ breeder.location }}<br>
+                            {% if breeder.health_testing %}
+                                <i class="bi bi-check-circle text-success"></i> Health Testing<br>
+                            {% endif %}
+                            {% if breeder.health_guarantee %}
+                                <i class="bi bi-shield-check text-success"></i> Health Guarantee<br>
+                            {% endif %}
+                        </p>
+                        
+                        <p class="card-text small">{{ breeder.description|truncatewords:15 }}</p>
+                        
+                        {% if breeder.average_rating > 0 %}
+                            <div class="mb-2">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= breeder.average_rating %}
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                    {% else %}
+                                        <i class="bi bi-star text-muted"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <small class="text-muted">({{ breeder.reviews.count }} reviews)</small>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="d-grid">
+                            <a href="{% url 'breeding:breeder_detail' breeder.id %}" class="btn btn-outline-primary">
+                                <i class="bi bi-eye"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-award display-1 text-muted"></i>
+        <h3 class="mt-3">No breeders found</h3>
+        <p class="text-muted">
+            {% if search_query or species_filter %}
+                Try adjusting your search criteria.
+            {% else %}
+                No verified breeders listed yet.
+            {% endif %}
+        </p>
+        <a href="{% url 'breeding:create_listing' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Be the First to List
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
