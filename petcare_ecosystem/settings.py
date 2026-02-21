@@ -10,8 +10,10 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me-in-producti
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = [ 'localhost',
+    '127.0.0.1',
+    'ajhem-jamir-petcare-ecosystem.onrender.com',
+]
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -161,15 +163,3 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER)
-import os
-import django
-
-if os.environ.get("RENDER") == "true":
-    try:
-        from django.contrib.auth import get_user_model
-        User = get_user_model()
-        if not User.objects.filter(username="admin").exists():
-            User.objects.create_superuser("admin", "admin@example.com", "admin123")
-            print("Superuser created.")
-    except Exception as e:
-        print(e)
