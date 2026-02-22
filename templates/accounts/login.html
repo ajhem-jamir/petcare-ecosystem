@@ -13,7 +13,7 @@
                 </h3>
             </div>
             <div class="card-body">
-                <form method="post">
+                <form method="post" id="loginForm">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
@@ -21,7 +21,9 @@
                     </div>
                     <div class="mb-3">
                         <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
-                        {{ form.password }}
+                        <div class="password-toggle-wrapper">
+                            {{ form.password }}
+                        </div>
                     </div>
                     
                     {% if form.errors %}
@@ -47,4 +49,48 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+.password-toggle-wrapper {
+    position: relative;
+}
+.password-toggle-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    z-index: 10;
+}
+.password-toggle-icon:hover {
+    color: #495057;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordField = document.querySelector('input[name="password"]');
+    if (passwordField) {
+        const wrapper = passwordField.parentElement;
+        
+        const toggleIcon = document.createElement('i');
+        toggleIcon.className = 'bi bi-eye password-toggle-icon';
+        
+        wrapper.appendChild(toggleIcon);
+        
+        toggleIcon.addEventListener('click', function() {
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                this.className = 'bi bi-eye-slash password-toggle-icon';
+            } else {
+                passwordField.type = 'password';
+                this.className = 'bi bi-eye password-toggle-icon';
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

@@ -8,6 +8,12 @@ class ForumPostForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'rows': 6}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Ensure category field appears only once
+        self.fields['category'].label = 'Category'
+        self.fields['post_type'].label = 'Post Type'
 
 class ForumReplyForm(forms.ModelForm):
     class Meta:

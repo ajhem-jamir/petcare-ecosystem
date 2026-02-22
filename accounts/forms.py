@@ -9,6 +9,18 @@ class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'user_type', 'password1', 'password2')
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Add custom attributes for password toggle functionality
+        self.fields['password1'].widget.attrs.update({
+            'class': 'form-control password-field',
+            'id': 'id_password1'
+        })
+        self.fields['password2'].widget.attrs.update({
+            'class': 'form-control password-field',
+            'id': 'id_password2'
+        })
 
 class UserProfileForm(forms.ModelForm):
     class Meta:

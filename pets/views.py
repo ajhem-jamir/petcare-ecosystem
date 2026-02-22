@@ -91,8 +91,9 @@ def ai_chat(request):
             data = json.loads(request.body)
             user_query = data.get('message', '')
 
-            # Your latest API Key
-            api_key = "AIzaSyCrawIQZ8j-E2ipdYwg0JNNpeVV3BGPMfM"
+            # Get API Key from environment variable (more secure)
+            import os
+            api_key = os.environ.get('GEMINI_API_KEY', 'AIzaSyA4HMoaI_iyc4EnyyCI-BVSX-TauMsBlNs')
             
             # UPDATED FOR 2026: Using the v1 stable endpoint and Gemini 2.5 Flash-Lite
             # This model is currently the best for free-tier real-time chat

@@ -80,9 +80,14 @@
                 <i class="bi bi-robot me-2"></i>
                 <strong>PetCare AI Assistant</strong>
             </div>
-            <button id="chat-close" class="btn btn-sm btn-link text-white p-0" style="text-decoration: none;">
-                <i class="bi bi-x-lg"></i>
-            </button>
+            <div>
+                <button id="chat-clear" class="btn btn-sm btn-link text-white p-0 me-2" style="text-decoration: none;" title="Clear chat">
+                    <i class="bi bi-trash"></i>
+                </button>
+                <button id="chat-close" class="btn btn-sm btn-link text-white p-0" style="text-decoration: none;" title="Close chat">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Chat Body -->
@@ -125,6 +130,7 @@
         const chatToggle = document.getElementById('chat-toggle');
         const chatContainer = document.getElementById('chat-container');
         const chatClose = document.getElementById('chat-close');
+        const chatClear = document.getElementById('chat-clear');
         const chatForm = document.getElementById('chat-form');
         const chatInput = document.getElementById('chat-input');
         const chatMessages = document.getElementById('chat-messages');
@@ -142,6 +148,34 @@
         // Close chat
         chatClose.addEventListener('click', () => {
             chatContainer.style.display = 'none';
+        });
+
+        // Function to clear chat history
+        function clearChatHistory() {
+            const messagesContainer = chatMessages.querySelector('.p-3');
+            if (messagesContainer) {
+                // Keep only the initial welcome message
+                messagesContainer.innerHTML = `
+                    <div class="d-flex mb-3">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-2">
+                            <div class="bg-white rounded p-2 shadow-sm">
+                                <small class="text-muted d-block mb-1"><strong>PetCare AI</strong></small>
+                                <p class="mb-0">Hi! 👋 I'm your PetCare assistant. How can I help you and your pet today?</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Clear chat button
+        chatClear.addEventListener('click', () => {
+            clearChatHistory();
         });
 
         // Add message to chat

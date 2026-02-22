@@ -12,6 +12,7 @@ class PetForm(forms.ModelForm):
         help_texts = {
             'custom_species': 'Only fill this if species is "Other" and you want to specify (e.g., Hamster, Ferret, Iguana)',
             'photo': 'Upload a photo (max 5MB). Image will be automatically cropped to square and optimized.',
+            'microchip_id': 'Optional - Enter microchip number if your pet has one',
         }
     
     def __init__(self, *args, **kwargs):

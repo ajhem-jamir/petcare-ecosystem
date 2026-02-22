@@ -13,7 +13,7 @@
                 </h3>
             </div>
             <div class="card-body">
-                <form method="post">
+                <form method="post" id="registrationForm">
                     {% csrf_token %}
                     {{ form|crispy }}
                     <div class="d-grid">
@@ -33,4 +33,87 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+.password-toggle-wrapper {
+    position: relative;
+}
+.password-toggle-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    z-index: 10;
+}
+.password-toggle-icon:hover {
+    color: #495057;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add password toggle functionality
+    function addPasswordToggle(fieldId) {
+        const passwordField = document.getElementById(fieldId);
+        if (!passwordField) return;
+        
+        const wrapper = passwordField.parentElement;
+        if (wrapper.classList.contains('password-toggle-wrapper')) return;
+        
+        wrapper.classList.add('password-toggle-wrapper');
+        
+        const toggleIcon = document.createElement('i');
+        toggleIcon.className = 'bi bi-eye password-toggle-icon';
+        toggleIcon.setAttribute('data-target', fieldId);
+        
+        wrapper.appendChild(toggleIcon);
+        
+        toggleIcon.addEventListener('click', function() {
+            const field = document.getElementById(this.getAttribute('data-target'));
+            if (field.type === 'password') {
+                field.type = 'text';
+                this.className = 'bi bi-eye-slash password-toggle-icon';
+            } else {
+                field.type = 'password';
+                this.className = 'bi bi-eye password-toggle-icon';
+            }
+        });
+    }
+    
+    // Add toggles to both password fields
+    addPasswordToggle('id_password1');
+    addPasswordToggle('id_password2');
+    
+    // Improved password confirmation validation
+    const form = document.getElementById('registrationForm');
+    const password1 = document.getElementById('id_password1');
+    const password2 = document.getElementById('id_password2');
+    
+    if (password2) {
+        password2.addEventListener('input', function() {
+            if (this.value && password1.value && this.value !== password1.value) {
+                this.setCustomValidity('Passwords do not match');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                this.classList.remove('is-invalid');
+            }
+        });
+        
+        password1.addEventListener('input', function() {
+            if (password2.value && this.value && password2.value !== this.value) {
+                password2.setCustomValidity('Passwords do not match');
+                password2.classList.add('is-invalid');
+            } else {
+                password2.setCustomValidity('');
+                password2.classList.remove('is-invalid');
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

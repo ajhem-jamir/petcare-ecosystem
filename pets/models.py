@@ -34,7 +34,7 @@ class Pet(models.Model):
     weight = models.DecimalField(max_digits=5, decimal_places=2, help_text="Weight in kg")
     activity_level = models.CharField(max_length=10, choices=ACTIVITY_CHOICES, default='medium', help_text="Pet's activity level")
     color = models.CharField(max_length=50, blank=True)
-    microchip_id = models.CharField(max_length=50, blank=True, unique=True)
+    microchip_id = models.CharField(max_length=50, blank=True, null=True, unique=True)
     photo = models.ImageField(upload_to='pets/', blank=True, null=True)
     medical_notes = models.TextField(blank=True)
     is_lost = models.BooleanField(default=False)
