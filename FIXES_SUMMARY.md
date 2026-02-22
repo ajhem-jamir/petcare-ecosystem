@@ -1,46 +1,65 @@
-# PetCare Ecosystem - Fixes Summary
+# Recent Fixes & Improvements (v2.0)
 
-## All Issues Fixed ✅
+## Issues Fixed ✅
 
 ### 1. Password Visibility Toggle
-- Added eye icon to password fields (registration & login)
-- Click to show/hide password
-- Passwords remain securely hashed
-
-**Files:** `accounts/forms.py`, `templates/accounts/register.html`, `templates/accounts/login.html`
+- Added eye icon to password fields (login & registration)
+- Click to show/hide password text
+- Secure: passwords remain hashed in database
 
 ### 2. Microchip Field Optional
-- Pet registration no longer requires microchip number
-- Field accepts NULL values, remains unique when provided
-- Migration applied: `0006_make_microchip_optional.py`
+- Pet registration no longer requires microchip
+- Field accepts NULL, remains unique when provided
+- Migration: `0006_make_microchip_optional.py`
 
-**Files:** `pets/models.py`, `pets/forms.py`
-
-### 3. Password Confirmation Validation
+### 3. Password Validation
 - Real-time validation with visual feedback
 - Red border when passwords don't match
-- Clear error messages
-
-**Files:** `accounts/views.py`, `templates/accounts/register.html`
+- Clear, actionable error messages
 
 ### 4. Duplicate Category Field Fixed
-- Community post form now shows single category field
-- Form submits correctly
+- Community post form shows single category field
+- Form submits correctly without confusion
 
-**Files:** `community/forms.py`
+### 5. AI Chatbot Improvements
+- Updated Gemini API key (old one was leaked)
+- Added clear conversation button (trash icon)
+- Better error handling and fallback responses
 
-### 5. Form Usability Improvements
+### 6. Form Usability
 - Clear help text on optional fields
-- Better error messages
-- Improved user feedback
+- Improved error messages
+- Better user feedback throughout
 
----
+## Files Modified
+
+**Python:**
+- `accounts/forms.py` - Password field customization
+- `accounts/views.py` - Enhanced error handling
+- `pets/models.py` - Microchip field optional
+- `pets/forms.py` - Help text improvements
+- `pets/views.py` - Updated API key handling
+- `community/forms.py` - Fixed duplicate category
+
+**Templates:**
+- `templates/accounts/register.html` - Password toggle & validation
+- `templates/accounts/login.html` - Password toggle
+- `templates/base.html` - Chatbot clear button
+
+**Database:**
+- `pets/migrations/0006_make_microchip_optional.py`
 
 ## Deployment
 
 ### Migration Required:
 ```bash
 python manage.py migrate pets
+```
+
+### Environment Variables:
+Add to Render dashboard:
+```
+GEMINI_API_KEY=AIzaSyA4HMoaI_iyc4EnyyCI-BVSX-TauMsBlNs
 ```
 
 ### Verification:
